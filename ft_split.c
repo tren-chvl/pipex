@@ -1,86 +1,103 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/13 16:26:09 by marcheva          #+#    #+#             */
+/*   Updated: 2025/11/18 13:55:32 by marcheva         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-static int  count_word(const char *s, char c)
+static void	free_stp(char **tab, int i)
 {
-    int count;
-
-    count = 0;
-    while (*s)
-    {
-        while (*s && *s == c)
-            s++;
-        if (*s)
-        {
-            count++;
-            while (*s && *s != c)
-                s++;
-        }
-    }
-    return (count);
+	while (i--)
+		free(tab[i]);
+	free(tab);
 }
 
-static char *word_dup(const char *s, char c)
+static int	count_word(const char *s, char c)
 {
-    size_t  len;
-    size_t  i;
-    char    *word;
+	int	count;
 
-    len = 0;
-    while (s[len] && s[len] != c)
-        len++;
-    word = malloc(sizeof(char) * (len + 1));
-    if (!word)
-        return (NULL);
-    i = 0;
-    while (i < len)
-    {
-        word[i] = s[i];
-        i++;
-    }
-    word[i] = '\0';
-    return (word);
+	count = 0;
+	while (*s)
+	{
+		while (*s == c)
+			s++;
+		if (*s)
+		{
+			count++;
+			while (*s && *s != c)
+				s++;
+		}
+	}
+	return (count);
 }
 
-void free_tab(char **tab, int n)
+static char	*word_dup(char const *s, char c)
 {
-    int i;
+	size_t	i;
+	size_t	len;
+	char	*word;
 
-    i = 0;
-    while (i < n)
-    {
-        free(tab[i]);
-        i++;
-    }
-    free(tab);
+	len = 0;
+	i = 0;
+	while (s[len] && s[len] != c)
+		len++;
+	word = (char *)malloc(sizeof(char) * (len + 1));
+	if (!word)
+		return (NULL);
+	while (i < len)
+	{
+		word[i] = s[i];
+		i++;
+	}
+	word[i] = '\0';
+	return (word);
 }
 
-char    **ft_split(const char *s, char c)
+static int	full_tab(char **tab, char const *s, char c)
 {
-    int     i;
-    int     count;
-    char    **tab;
+	int	i;
 
-    if (!s)
-        return (NULL);
-    count = count_word(s, c);
-    tab = malloc(sizeof(char *) * (count + 1));
-    if (!tab)
-        return (NULL);
-    i = 0;
-    while (*s)
-    {
-        while (*s && *s == c)
-            s++;
-        if (*s)
-        {
-            tab[i] = word_dup(s, c);
-            if (!tab[i])
-                return (free_tab(tab, i), NULL);
-            i++;
-            while (*s && *s != c)
-                s++;
-        }
-    }
-    tab[i] = NULL;
-    return (tab);
+	i = 0;
+	while (*s)
+	{
+		while (*s && *s == c)
+			s++;
+		if (*s)
+		{
+			tab[i] = word_dup(s, c);
+			if (!tab[i])
+			{
+				free_stp(tab, i);
+				return (0);
+			}
+			i++;
+			while (*s && *s != c)
+				s++;
+		}
+	}
+	tab[i] = NULL;
+	return (1);
+}
+
+char	**ft_split(char *s, char c)
+{
+	int		count;
+	char	**tab;
+
+	if (!s)
+		return (NULL);
+	count = count_word(s, c);
+	tab = (char **)malloc(sizeof(char *) * (count + 1));
+	if (!tab)
+		return (NULL);
+	if (!full_tab(tab, s, c))
+		return (NULL);
+	return (tab);
 }
