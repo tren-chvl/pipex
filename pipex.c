@@ -6,13 +6,11 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:06:21 by marcheva          #+#    #+#             */
-/*   Updated: 2025/11/18 13:55:03 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/18 15:55:38 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "pipex.h"
-
 
 void exec_commande(char *cmd ,char **envp)
 {
@@ -36,38 +34,29 @@ void exec_commande(char *cmd ,char **envp)
 	exit(EXIT_FAILURE);
 }
 
-
 int main(int argc,char *argv[],char **envp)
 {
 	int fd[2];
-	pid_t pid;
+	pid_t pid1;
+	pid_t pid2;
 
 	if (argc != 5)
-	{
-		perror("");
-		exit(EXIT_FAILURE);
-	}
+		return(perror("error argument :( "),EXIT_FAILURE);
 	if (pipe(fd) == -1)
 		return (error_msg("pipe"));
-	pid = fork();
-	if (pid == -1)
+	pid1 = fork();
+	if (pid1 == -1)
 		return (error_msg("fork"));
-	if (pid == 0)
-		procces_child(fd,argv,envp);
-	else
-	{
-		procces_parent(fd,argv,envp);
-		wait(NULL);
-	}
+	if (pid1  == 0)
+		procces_child1(fd,argv,envp);
+	pid2 = fork();
+	if (pid2 == -1)
+		return (error_msg("fork"));
+	if (pid2  == 0)
+		procces_child2(fd,argv,envp);
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid1, NULL,0);
+	waitpid(pid2,NULL,0);
 	return (0);
 }
-
-// int main(int argc, char* argv[], char* envp[])
-// {
-//     for(int i = 0; envp[i] != NULL; i++)
-//     {
-//         printf("envp[%d] = %s\n", i, envp[i]);
-//     }
- 
-//     return EXIT_SUCCESS;
-// }

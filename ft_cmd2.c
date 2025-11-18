@@ -6,13 +6,13 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:06:51 by marcheva          #+#    #+#             */
-/*   Updated: 2025/11/18 14:08:08 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/18 15:28:29 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void procces_parent(int *fd, char **argv,char **envp)
+void procces_child2(int *fd, char **argv,char **envp)
 {
 	int outfile;
 

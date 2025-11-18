@@ -6,7 +6,7 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:00:49 by marcheva          #+#    #+#             */
-/*   Updated: 2025/11/18 11:00:09 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/18 14:39:41 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ char *find_path(char *cmd, char **tabenv)
 	int j;
 	char **path;
 	char *full_path;
+	char *tmp;
 
 	i = 0;
 	j = 0;
@@ -54,7 +55,9 @@ char *find_path(char *cmd, char **tabenv)
 	path = ft_split(tabenv[i] + 5, ':');
 	while (path[j])
 	{
-		full_path = ft_strjoin(path[j],cmd);
+		tmp = ft_strjoin(path[j], "/");
+		full_path = ft_strjoin(tmp,cmd);
+		free(tmp);
 		if (!full_path)
 			return (null_free(path));
 		if (access(full_path,X_OK) == 0)
