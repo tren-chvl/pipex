@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Couleurs pour plus de lisibilité
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${YELLOW}=== PIPEX TORTURE TESTS ===${NC}"
+
+# Fonction pour lancer un test
+run_test() {
+    echo -e "${YELLOW}Test: $1${NC}"
+    echo "Command: $2"
+    eval "$2"
+    echo -e "${GREEN}--- Done ---${NC}\n"
+}
+
+# 1. Cas normal
+run_test "Cas normal (ls -l | wc -l)" "./pipex infile \"ls -l\" \"wc -l\" outfile && cat outfile"
+
+# 2. Fichier d'entrée inexistant
+run_test "Fichier d'entrée inexistant" "./pipex nofile \"ls -l\" \"wc -l\" outfile"
+
+# 3. Fichier de sortie non accessible
+run_test "Fichier de sortie non accessible" "./pipex infile \"ls -l\" \"wc -l\" /root/outfile"
+
+# 4. Entrée vide
+run_test "Entrée vide (/dev/null)" "./pipex /dev/null \"ls -l\" \"wc -l\" outfile && cat outfile"
+
+# 5. Commande inexistante
+run_test "Commande inexistante (badcmd)" "./pipex infile \"badcmd\" \"wc -l\" outfile"
+
+# 6. Chemin absolu
+run_test "Chemin absolu (/bin/ls)" "./pipex infile \"/bin/ls -l\" \"wc -l\" outfile && cat outfile"
+
+# 7. Exécutable local
+run_test "Exécutable local (./pipex lui-même)" "./pipex infile \"./pipex infile ls -l wc -l outfile\" \"wc -l\" outfile"
+
+# 8. Arguments complexes
+run_test "Arguments complexes (grep main)" "./pipex infile \"grep main\" \"wc -l\" outfile"
+
+run_test "Arguments avec regex" "./pipex infile \"grep -E 'int|char'\" \"wc -l\" outfile"
+
+# 9. Pipes simples
+run_test "cat | cat" "./pipex infile \"cat\" \"cat\" outfile && cat outfile"
+
+run_test "cat | grep a" "./pipex infile \"cat\" \"grep a\" outfile && cat outfile"
+
+# 10. Stress avec head/tail
+run_test "head -n 1 | tail -n 1" "./pipex infile \"head -n 1\" \"tail -n 1\" outfile && cat outfile"
+
+# 11. Valgrind check
+run_test "Valgrind (ls -l | wc -l)" "valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all ./pipex infile \"ls -l\" \"wc -l\" outfile"

@@ -38,16 +38,18 @@ char *full_free(char **tab,char *full)
 	ft_free_tab(tab);
 	return (full);
 }
+
 char *find_path(char *cmd, char **tabenv)
 {
 	int i;
 	int j;
 	char **path;
 	char *full_path;
-	char *tmp;
 
 	i = 0;
 	j = 0;
+	if (access(cmd, X_OK) == 0)
+        return (cmd);
 	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
 		i++;
 	if (!tabenv[i])
@@ -55,9 +57,7 @@ char *find_path(char *cmd, char **tabenv)
 	path = ft_split(tabenv[i] + 5, ':');
 	while (path[j])
 	{
-		tmp = ft_strjoin(path[j], "/");
-		full_path = ft_strjoin(tmp,cmd);
-		free(tmp);
+		full_path = ft_strjoin(path[j],cmd);
 		if (!full_path)
 			return (null_free(path));
 		if (access(full_path,X_OK) == 0)
