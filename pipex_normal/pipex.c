@@ -17,6 +17,11 @@ void	exec_commande(char *cmd, char **envp)
 	char	**split;
 	char	*path;
 
+	if (!cmd || cmd[0] == '\0')
+	{
+		write(2, "pipex: command not found\n", 25);
+		exit(127);
+	}
 	split = ft_split(cmd, ' ');
 	if (!split)
 		exit(EXIT_FAILURE);
@@ -24,39 +29,41 @@ void	exec_commande(char *cmd, char **envp)
 	if (!path)
 	{
 		ft_free_tab(split);
-		perror("command not found");
-		exit(EXIT_FAILURE);
+		write(2, "pipex: command not found\n", 25);
+		exit(127);
 	}
 	execve(path, split, envp);
-	perror("execve fail");
+	perror("execve");
 	ft_free_tab(split);
 	free(path);
-	exit(EXIT_FAILURE);
+	exit(127);
 }
 
 int	main(int argc, char *argv[], char **envp)
 {
 	int		fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
+	int		status;
+	t_pid	pid;
 
 	if (argc != 5)
 		return (perror("error argument :( "), EXIT_FAILURE);
 	if (pipe(fd) == -1)
 		return (error_msg("pipe"));
-	pid1 = fork();
-	if (pid1 == -1)
+	pid.pid1 = fork();
+	if (pid.pid1 == -1)
 		return (error_msg("fork"));
-	if (pid1 == 0)
+	if (pid.pid1 == 0)
 		procces_child1(fd, argv, envp);
-	pid2 = fork();
-	if (pid2 == -1)
+	pid.pid2 = fork();
+	if (pid.pid2 == -1)
 		return (error_msg("fork"));
-	if (pid2 == 0)
+	if (pid.pid2 == 0)
 		procces_child2(fd, argv, envp);
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
+	waitpid(pid.pid1, NULL, 0);
+	waitpid(pid.pid2, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (0);
 }

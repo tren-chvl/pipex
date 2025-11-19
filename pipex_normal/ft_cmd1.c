@@ -18,7 +18,10 @@ void	procces_child1(int *fd, char **argv, char **envp)
 
 	infile = open(argv[1], O_RDONLY);
 	if (infile == -1)
-		exit (error_msg("infile"));
+	{
+		perror("infile");
+		exit(1);
+	}
 	dup2(infile, STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(infile);

@@ -22,6 +22,13 @@
 # include <stdarg.h>
 # include <stdio.h>
 
+
+typedef struct s_pid
+{
+    pid_t pid1;
+    pid_t pid2;
+}   t_pid;
+
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
 int		ft_strlen(char *str);
