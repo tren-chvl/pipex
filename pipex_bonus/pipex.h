@@ -6,12 +6,16 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:06:30 by marcheva          #+#    #+#             */
-/*   Updated: 2025/11/18 15:29:35 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/19 15:01:37 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 #define PIPEX_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 10000
+# endif
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -24,10 +28,10 @@
 
 typedef struct s_data
 {
-    int argc;
-    char    **argv;
-    char    **envp;
-    int outfile;
+	int argc;
+	char    **argv;
+	char    **envp;
+	int outfile;
 }   t_data;
 
 
@@ -44,20 +48,14 @@ char	*find_path(char *cmd, char **envp);
 void    ft_free_tab(char **tab);
 void	exec_commande(char *cmd ,char **envp);
 
-int    ft_printf(const char *str, ...);
-int    ft_putnbr(int nb);
-int    ft_putstr(char *s);
-int    ft_put(unsigned int nb);
-int    ft_convert(unsigned long str);
-int    ft_hexa_unsigned(unsigned int nb, int uppercase);
-int    ft_addr(void *ptr);
-int    ft_pourcentage(char c, va_list args);
-int    pourcentage_c(va_list args);
-int    pourcentage_double(void);
-int    pourcentage_int(va_list args);
-int    pourcentage_s(va_list args);
-int    pourcentage_addr(va_list args);
-int    pourcentage_u(va_list args);
-int    pourcentage_x(va_list args, int uppercase);
+char	*get_next_line(int fd);
+char	*read_newline(int fd, char *line);
+char	*extract_line(char *line);
+char	*clean_line(char *line);
+
+size_t	ft_strlen_g(char *line);
+char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strchr(char *s, int c);
+char	*free_return(char *s1, char *join);
 
 #endif
