@@ -6,7 +6,7 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 10:06:30 by marcheva          #+#    #+#             */
-/*   Updated: 2025/11/19 10:59:57 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/20 11:51:08 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,11 @@
 # include <stdarg.h>
 # include <stdio.h>
 
-
 typedef struct s_pid
 {
-    pid_t pid1;
-    pid_t pid2;
-}   t_pid;
+	pid_t	pid1;
+	pid_t	pid2;
+}	t_pid;
 
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
@@ -41,5 +40,8 @@ void	procces_child1(int *fd, char **argv, char **envp);
 char	*find_path(char *cmd, char **envp);
 void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);
+
+void	read_here_doc(char *limiter, int fd);
+void	wait_all(void);
 
 #endif

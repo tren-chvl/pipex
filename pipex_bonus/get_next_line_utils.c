@@ -6,11 +6,11 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 13:03:47 by marcheva          #+#    #+#             */
-/*   Updated: 2025/10/22 14:54:26 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:48:15 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "pipex.h"
 
 size_t	ft_strlen_g(char *line)
 {
@@ -30,7 +30,7 @@ char	*free_return(char *s1, char *join)
 	return (join);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_gnl(char *s1, char *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -66,9 +66,7 @@ char	*ft_strchr(char *s, int c)
 	while (*s)
 	{
 		if (*s == (char)c)
-		{
 			return ((char *)s);
-		}
 		s++;
 	}
 	return (NULL);

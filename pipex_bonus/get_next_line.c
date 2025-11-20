@@ -6,11 +6,11 @@
 /*   By: marcheva <marcheva@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/20 11:26:35 by marcheva          #+#    #+#             */
-/*   Updated: 2025/10/31 16:07:08 by marcheva         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:47:57 by marcheva         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "pipex.h"
 
 char	*clean_line(char *line)
 {
@@ -25,10 +25,7 @@ char	*clean_line(char *line)
 	while (line[i] && line[i] != '\n')
 		i++;
 	if (!line[i])
-	{
-		free(line);
-		return (NULL);
-	}
+		return (free_return(line, NULL));
 	i++;
 	str = malloc(sizeof(char) * (ft_strlen_g(line + i) + 1));
 	if (!str)
@@ -37,6 +34,8 @@ char	*clean_line(char *line)
 		str[j++] = line[i++];
 	str[j] = '\0';
 	free(line);
+	if (str[0] == '\0')
+		return (free_return(str, NULL));
 	return (str);
 }
 
@@ -103,31 +102,16 @@ char	*get_next_line(int fd)
 		return (NULL);
 	line = read_newline(fd, line);
 	if (!line)
+	{
+		if (line)
+		{
+			free(line);
+			line = NULL;
+		}
 		return (NULL);
+	}
 	str = extract_line(line);
 	tmp = clean_line(line);
 	line = tmp;
 	return (str);
 }
-
-#include <stdio.h>
-int main(void)
-{
-	int fd;
-	char *line;
-	fd = open("vide", O_RDONLY);
-	if (fd < 0)
-		return (1);
-	line = get_next_line(fd);
-	while (line)
-	{
-		printf("%s", line);
-		free(line);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (0);
-}
-
-
-  
