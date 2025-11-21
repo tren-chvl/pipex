@@ -84,7 +84,7 @@ char	*read_newline(int fd, char *line)
 			return (NULL);
 		}
 		buffer[read_byte] = '\0';
-		line = ft_strjoin(line, buffer);
+		line = ft_strjoin_gnl(line, buffer);
 		if (!line)
 			free_return(line, NULL);
 	}

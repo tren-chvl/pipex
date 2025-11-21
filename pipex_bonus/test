@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Nettoyage
+rm -f infile outfile
+
+# Création d'un fichier d'entrée
+echo "hello world" > infile
+
+echo "=== Test 1 : commande valide ==="
+./pipex infile "cat" "wc -w" outfile
+echo "pipex exit code = $?"
+< infile cat | wc -w > outfile.shell
+echo "shell exit code = $?"
+
+echo "=== Test 2 : commande inexistante ==="
+./pipex infile "commande_inexistante" "wc -l" outfile
+echo "pipex exit code = $?"
+< infile commande_inexistante | wc -l > outfile.shell 2>/dev/null
+echo "shell exit code = $?"
+
+echo "=== Test 3 : commande non exécutable ==="
+echo "echo hello" > test.sh
+chmod -x test.sh
+./pipex infile "./test.sh" "wc -l" outfile
+echo "pipex exit code = $?"
+< infile ./test.sh | wc -l > outfile.shell 2>/dev/null
+echo "shell exit code = $?"

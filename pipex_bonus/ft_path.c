@@ -38,6 +38,25 @@ char	*full_free(char **tab, char *full)
 	ft_free_tab(tab);
 	return (full);
 }
+char *ft_strdup(char *s1)
+{
+	size_t len;
+	char *dest;
+	size_t i;
+
+	len = ft_strlen(s1);
+	dest = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dest)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		dest[i] = s1[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
 
 char	*find_path(char *cmd, char **tabenv)
 {
@@ -49,7 +68,7 @@ char	*find_path(char *cmd, char **tabenv)
 	i = 0;
 	j = 0;
 	if (access(cmd, X_OK) == 0)
-		return (cmd);
+		return (ft_strdup(cmd));
 	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
 		i++;
 	if (!tabenv[i])

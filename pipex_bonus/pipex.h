@@ -28,11 +28,19 @@
 
 typedef struct s_data
 {
-	int		argc;
-	char	**argv;
-	char	**envp;
-	int		outfile;
-}	t_data;
+    int		argc;
+    char	**argv;
+    char	**envp;
+    char	*outfile_path;
+    int		append;
+}   t_data;
+
+typedef struct s_file
+{
+	int outfile;
+	int flags;
+	pid_t pid;
+}	t_file;
 
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
@@ -40,7 +48,7 @@ int		ft_strlen(char *str);
 char	**ft_split(char *s, char c);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
 int		ft_strcmp(char *s1, char *s2);
-
+void	ft_bzero(void *s, size_t n);
 void	procces_child2(int *fd, char **argv, char **envp);
 void	procces_child1(int *fd, char **argv, char **envp);
 
@@ -49,9 +57,9 @@ void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);
 int		here_doc(int argc, char **argv, char **envp);
 int		pipex(int argc, char **argv, char **envp);
-void	wait_all(void);
+void wait_all(pid_t last_pid);
 void	exec_middle(int prev_fd, char *cmd, char **envp, int *fd);
-void	exec_last(int prev_fd, int outfile, char *cmd, char **envp);
+pid_t	exec_last(int prev_fd, char *cmd, char **envp, t_data *data);
 
 char	*get_next_line(int fd);
 char	*read_newline(int fd, char *line);
