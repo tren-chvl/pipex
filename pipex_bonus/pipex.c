@@ -18,51 +18,63 @@
 #include <string.h>
 #include <stdio.h>
 
+void safe_execve(char *path, char **argv, char **envp)
+{
+    if (!path) 
+	{
+        ft_free_tab(argv);
+        exit(127); // commande introuvable
+    }
+    char *tmp_path = path;
+    char **tmp_argv = argv;
+
+    execve(tmp_path, tmp_argv, envp);
+    ft_free_tab(tmp_argv);
+    free(tmp_path);
+
+    if (errno == EACCES)
+        exit(126);
+    else if (errno == ENOENT) 
+	{
+        if (ft_strchr(argv[0], '/'))
+            exit(1);
+        else
+            exit(127);
+    } else 
+	{
+        perror("execve");
+        exit(1);
+    }
+}
 
 void exec_commande(char *cmd, char **envp)
 {
-    char **split;
+    char **split = ft_split(cmd, ' ');
     char *path;
 
-    printf("DEBUG: exec_commande running in pid=%d\n", getpid());
-    split = ft_split(cmd, ' ');
-    if (!split)
-    {
-        perror("malloc");
-        exit(1);
+    if (!split || !split[0] || !*split[0]) 
+	{
+        safe_execve(NULL, split, envp); // laisse safe_execve gérer
     }
-    path = find_path(split[0], envp);
-    if (!path)
-    {
-        ft_free_tab(split);
-        fprintf(stderr, "DEBUG: path=NULL, exit(127) pid=%d\n", getpid());
-        exit(127);
-    }
-    execve(path, split, envp);
-    perror("execve");
-    ft_free_tab(split);
-    free(path);
-    fprintf(stderr, "DEBUG errno=%d (%s) pid=%d\n",
-            errno, strerror(errno), getpid());
-    if (errno == ENOENT)
-        exit(127);
-    else if (errno == EACCES)
-        exit(126);
+
+    if (ft_strchr(split[0], '/'))
+        path = ft_strdup(split[0]); // chemin explicite
     else
-        exit(1);
+        path = find_path(split[0], envp); // recherche dans PATH
+
+    safe_execve(path, split, envp);
 }
 
 
 
 int main(int argc, char **argv, char **envp)
 {
-    if (argc < 5)
-        return (error_msg("error argument :( "));
-    if (ft_strcmp(argv[1], "here_doc") == 0)
-        here_doc(argc, argv, envp);
-    else
-        pipex(argc, argv, envp);
-    return 0;
+	if (argc < 5)
+		return (error_msg("error argument :( "));
+	if (ft_strcmp(argv[1], "here_doc") == 0)
+		here_doc(argc, argv, envp);
+	else
+		pipex(argc, argv, envp);
+	return 0;
 }
-
 

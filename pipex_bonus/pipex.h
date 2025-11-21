@@ -42,6 +42,7 @@ typedef struct s_file
 	pid_t pid;
 }	t_file;
 
+void safe_execve(char *path, char **argv, char **envp);
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
 int		ft_strlen(char *str);
@@ -57,9 +58,9 @@ void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);
 int		here_doc(int argc, char **argv, char **envp);
 int		pipex(int argc, char **argv, char **envp);
-void wait_all(pid_t last_pid);
-pid_t	exec_middle(int prev_fd, char *cmd, char **envp, int *fd);
-pid_t	exec_last(int prev_fd, char *cmd, char **envp, t_data *data);
+int     wait_all(pid_t last_pid);
+pid_t   exec_middle(int prev_fd, char *cmd_path, char **cmd_args, char **envp, int fd[2]);
+pid_t   exec_last(int prev_fd, char *cmd_path, char **cmd_args, char **envp, t_data *data);
 
 char	*get_next_line(int fd);
 char	*read_newline(int fd, char *line);
@@ -70,5 +71,6 @@ size_t	ft_strlen_g(char *line);
 char	*ft_strjoin_gnl(char *s1, char *s2);
 char	*ft_strchr(char *s, int c);
 char	*free_return(char *s1, char *join);
+char    *ft_strdup(char *s1);
 
 #endif

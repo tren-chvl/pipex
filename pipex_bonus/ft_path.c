@@ -58,31 +58,62 @@ char *ft_strdup(char *s1)
 	return (dest);
 }
 
-char	*find_path(char *cmd, char **tabenv)
+int ft_verif(const char *path)
 {
-	int		i;
-	int		j;
-	char	**path;
-	char	*full_path;
+	if (access(path, F_OK) != 0)
+	{
+		if (errno == ENOENT)
+			return 1;
+		return 1;
+	}
+	if (access(path, X_OK) != 0)
+	{
+		if (errno == EACCES)
+			return 126;
+		return 1;
+	}
+	return 0;
+}
 
-	i = 0;
-	j = 0;
-	if (access(cmd, F_OK) == 0)
-		return (ft_strdup(cmd));
+char *find_path(char *cmd, char **tabenv)
+{
+	int   i = 0, j;
+	char **path;
+	char *full_path;
+
+	if (ft_strchr(cmd, '/'))
+	{
+		int code = ft_verif(cmd);
+		if (code == 0)
+			return ft_strdup(cmd);
+		exit(code);
+	}
 	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
 		i++;
 	if (!tabenv[i])
-		return (NULL);
+		return NULL;
 	path = ft_split(tabenv[i] + 5, ':');
+	j = 0;
 	while (path[j])
 	{
-		full_path = ft_strjoin(path[j++], cmd);
-		if (!full_path)
-			return (null_free(path));
+		full_path = ft_strjoin(path[j], cmd);
 		if (access(full_path, F_OK) == 0)
-			return (full_free(path, full_path));
+		{
+			int code = ft_verif(full_path);
+			if (code == 0)
+			{
+				ft_free_tab(path);
+				return full_path;
+			}
+			ft_free_tab(path);
+			free(full_path);
+			exit(code);
+		}
 		free(full_path);
+		j++;
 	}
 	ft_free_tab(path);
-	return (NULL);
+	return NULL;
 }
+
+

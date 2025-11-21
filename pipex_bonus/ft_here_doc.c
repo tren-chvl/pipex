@@ -12,6 +12,23 @@
 
 #include "pipex.h"
 
+
+void parse_command(char *cmd, char **envp, char **cmd_path, char ***cmd_args)
+{
+    *cmd_args = ft_split(cmd, ' ');
+    if (!*cmd_args || !(*cmd_args)[0])
+    {
+        perror("parse_command");
+        exit(127);
+    }
+    *cmd_path = find_path((*cmd_args)[0], envp);
+    if (!*cmd_path)
+    {
+        perror("command not found");
+        exit(127);
+    }
+}
+
 void read_here_doc(char *limiter, int fd[2])
 {
 	char *line;
@@ -53,29 +70,34 @@ int init_here_doc(char *limiter)
 	return (fd[0]);
 }
 
-void wait_all(pid_t last_pid)
+int wait_all(pid_t last_pid)
 {
-	int status;
-	pid_t pid;
-	int exit_code = 0;
+    int status;
+    pid_t pid;
+    int exit_code = 0;
 
-	while ((pid = wait(&status)) > 0)
-	{
-		if (pid == last_pid)
-		{
-			if (WIFEXITED(status))
-				exit_code = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				exit_code = 128 + WTERMSIG(status);
-		}
-	}
-	exit(exit_code); 
+    while ((pid = wait(&status)) > 0)
+    {
+        if (pid == last_pid)
+        {
+            if (WIFEXITED(status))
+                exit_code = WEXITSTATUS(status);
+            else if (WIFSIGNALED(status))
+                exit_code = 128 + WTERMSIG(status);
+        }
+    }
+    return exit_code;
 }
+
+
+
 pid_t run_commands(t_data *data, int prev_fd)
 {
     int fd[2];
     int i;
     pid_t last_pid;
+    char *cmd_path;
+    char **cmd_args;
 
     i = 3;
     while (i < data->argc - 2)
@@ -85,22 +107,26 @@ pid_t run_commands(t_data *data, int prev_fd)
             perror("pipe");
             exit(1);
         }
-        exec_middle(prev_fd, data->argv[i], data->envp, fd);
+        cmd_args = ft_split(data->argv[i], ' ');
+        cmd_path = find_path(cmd_args[0], data->envp);
+        exec_middle(prev_fd, cmd_path, cmd_args, data->envp, fd);
+        free(cmd_path);
+        ft_free_tab(cmd_args);
         close(prev_fd);
         close(fd[1]);
         prev_fd = fd[0];
         i++;
     }
-    last_pid = exec_last(prev_fd, data->argv[data->argc - 2], data->envp, data);
+    cmd_args = ft_split(data->argv[data->argc - 2], ' ');
+    cmd_path = find_path(cmd_args[0], data->envp);
+    last_pid = exec_last(prev_fd, cmd_path, cmd_args, data->envp, data);
+    free(cmd_path);
+    ft_free_tab(cmd_args);
     close(prev_fd);
     return (last_pid);
 }
-void close_all_fds(void)
-{
-    int fd;
-    for (fd = 3; fd < 1024; fd++)
-        close(fd);
-}
+
+
 
 
 
@@ -122,7 +148,6 @@ int here_doc(int argc, char **argv, char **envp)
 	if (prev_fd < 0)
 		return (1);
 	last_pid = run_commands(&data, prev_fd);
-	close_all_fds();
 	wait_all(last_pid);
 	return (0);
 }
