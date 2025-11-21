@@ -1,24 +1,24 @@
 #!/bin/bash
 
-rm -f infile outfile
+rm -f infile outfile here_out
 echo "hello world" > infile
 
-echo "=== Test 1 : commandes valides ==="
+echo "=== Test 1 : pipeline simple ==="
 ./pipex infile "cat" "wc -w" outfile
 echo "pipex exit code = $?"
-< infile cat | wc -w > outfile.shell
+< infile cat | wc -w > shell_out
 echo "shell exit code = $?"
 
 echo "=== Test 2 : commande inexistante en dernier ==="
 ./pipex infile "cat" "commande_inexistante" outfile
 echo "pipex exit code = $?"
-< infile cat | commande_inexistante > outfile.shell 2>/dev/null
+< infile cat | commande_inexistante > shell_out 2>/dev/null
 echo "shell exit code = $?"
 
 echo "=== Test 3 : commande inexistante au milieu ==="
 ./pipex infile "commande_inexistante" "wc -l" outfile
 echo "pipex exit code = $?"
-< infile commande_inexistante | wc -l > outfile.shell 2>/dev/null
+< infile commande_inexistante | wc -l > shell_out 2>/dev/null
 echo "shell exit code = $?"
 
 echo "=== Test 4 : commande non exécutable en dernier ==="
@@ -26,5 +26,19 @@ echo "echo hello" > test.sh
 chmod -x test.sh
 ./pipex infile "cat" "./test.sh" outfile
 echo "pipex exit code = $?"
-< infile cat | ./test.sh > outfile.shell 2>/dev/null
+< infile cat | ./test.sh > shell_out 2>/dev/null
 echo "shell exit code = $?"
+
+echo "=== Test 5 : pipeline plus long (3 commandes) ==="
+./pipex infile "cat" "tr a-z A-Z" "wc -c" outfile
+echo "pipex exit code = $?"
+< infile cat | tr a-z A-Z | wc -c > shell_out
+echo "shell exit code = $?"
+
+echo "=== Test 6 : here_doc ==="
+./pipex here_doc END "cat" "wc -l" here_out <<END
+ligne1
+ligne2
+END
+echo "pipex exit code = $?"
+cat here_out

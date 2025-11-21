@@ -67,7 +67,7 @@ char	*find_path(char *cmd, char **tabenv)
 
 	i = 0;
 	j = 0;
-	if (access(cmd, X_OK) == 0)
+	if (access(cmd, F_OK) == 0)
 		return (ft_strdup(cmd));
 	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
 		i++;
@@ -79,7 +79,7 @@ char	*find_path(char *cmd, char **tabenv)
 		full_path = ft_strjoin(path[j++], cmd);
 		if (!full_path)
 			return (null_free(path));
-		if (access(full_path, X_OK) == 0)
+		if (access(full_path, F_OK) == 0)
 			return (full_free(path, full_path));
 		free(full_path);
 	}

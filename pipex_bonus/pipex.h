@@ -58,7 +58,7 @@ void	exec_commande(char *cmd, char **envp);
 int		here_doc(int argc, char **argv, char **envp);
 int		pipex(int argc, char **argv, char **envp);
 void wait_all(pid_t last_pid);
-void	exec_middle(int prev_fd, char *cmd, char **envp, int *fd);
+pid_t	exec_middle(int prev_fd, char *cmd, char **envp, int *fd);
 pid_t	exec_last(int prev_fd, char *cmd, char **envp, t_data *data);
 
 char	*get_next_line(int fd);

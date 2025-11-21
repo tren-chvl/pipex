@@ -54,9 +54,6 @@ void exec_commande(char *cmd, char **envp)
 
 
 
-
-
-
 int main(int argc, char **argv, char **envp)
 {
     if (argc < 5)
@@ -65,6 +62,7 @@ int main(int argc, char **argv, char **envp)
         here_doc(argc, argv, envp);
     else
         pipex(argc, argv, envp);
-    return (0); 
+    return 0;
 }
+
 
