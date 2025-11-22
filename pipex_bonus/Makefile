@@ -10,7 +10,8 @@ SRCS =	pipex.c \
 		ft_bonus_pipe.c \
 		ft_here_doc.c \
 		get_next_line.c \
-		get_next_line_utils.c
+		get_next_line_utils.c \
+		ft_utils2.c
 
 OBJS = $(SRCS:.c=.o)
 

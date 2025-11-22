@@ -12,32 +12,6 @@
 
 #include "pipex.h"
 
-void	ft_free_tab(char **tab)
-{
-	int	i;
-
-	if (!tab)
-		return ;
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-}
-
-char	*null_free(char **tab)
-{
-	ft_free_tab(tab);
-	return (NULL);
-}
-
-char	*full_free(char **tab, char *full)
-{
-	ft_free_tab(tab);
-	return (full);
-}
 char *ft_strdup(char *s1)
 {
 	size_t len;
@@ -58,34 +32,19 @@ char *ft_strdup(char *s1)
 	return (dest);
 }
 
-int ft_verif(const char *path)
-{
-	if (access(path, F_OK) != 0)
-	{
-		if (errno == ENOENT)
-			return 127;
-		return 1;
-	}
-	if (access(path, X_OK) != 0)
-	{
-		if (errno == EACCES)
-			return 126;
-		return 1;
-	}
-	return 0;
-}
-
 char *find_path(char *cmd, char **tabenv)
 {
-    int i = 0, j;
+    int i;
+	int j;
     char **path;
     char *full_path;
 
-
+	i = 0;
+	j = 0;
     if (!cmd || !*cmd)
         exit(127);
     if (ft_strchr(cmd, '/'))
-        return ft_strdup(cmd); // ne quitte pas, laisse safe_execve gérer
+        return ft_strdup(cmd);
     while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
         i++;
     if (!tabenv[i])
@@ -98,7 +57,7 @@ char *find_path(char *cmd, char **tabenv)
         if (access(full_path, F_OK) == 0)
         {
             ft_free_tab(path);
-            return full_path; // renvoie le chemin, safe_execve vérifiera X_OK
+            return full_path;
         }
         free(full_path);
         j++;

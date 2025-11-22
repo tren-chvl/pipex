@@ -11,27 +11,18 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include <string.h>
-
-#include "pipex.h"
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
 
 void safe_execve(char *path, char **argv, char **envp)
 {
 	if (!path) 
 	{
 		ft_free_tab(argv);
-		exit(127); // commande introuvable
+		exit(127);
 	}
-	char *tmp_path = path;
-	char **tmp_argv = argv;
 
-	execve(tmp_path, tmp_argv, envp);
-	ft_free_tab(tmp_argv);
-	free(tmp_path);
-
+	execve(path, argv, envp);
+	ft_free_tab(argv);
+    free(path);
 	if (errno == EACCES)
 		exit(126);
 	else if (errno == ENOENT) 
@@ -51,16 +42,15 @@ void exec_commande(char *cmd, char **envp)
 {
 	if (!cmd || !*cmd)
 		exit(127);
-
-	char **split = ft_split(cmd, ' ');
+	char **split;
 	char *path;
 
+	split = ft_split(cmd, ' ');
 	if (!split || !split[0] || !*split[0]) 
 	{
 		ft_free_tab(split);
 		exit(127);
 	}
-
 	if (ft_strchr(split[0], '/'))
 		path = ft_strdup(split[0]);
 	else

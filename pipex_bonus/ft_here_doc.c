@@ -89,10 +89,6 @@ int wait_all(pid_t last_pid)
     return exit_code;
 }
 
-
-
-
-
 pid_t run_commands(t_data *data, int prev_fd)
 {
     int fd[2];
@@ -127,10 +123,6 @@ pid_t run_commands(t_data *data, int prev_fd)
     close(prev_fd);
     return (last_pid);
 }
-
-
-
-
 
 int here_doc(int argc, char **argv, char **envp)
 {

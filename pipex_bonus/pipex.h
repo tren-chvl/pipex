@@ -42,7 +42,7 @@ typedef struct s_file
 	pid_t pid;
 }	t_file;
 
-void safe_execve(char *path, char **argv, char **envp);
+void    safe_execve(char *path, char **argv, char **envp);
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
 int		ft_strlen(char *str);
@@ -72,5 +72,7 @@ char	*ft_strjoin_gnl(char *s1, char *s2);
 char	*ft_strchr(char *s, int c);
 char	*free_return(char *s1, char *join);
 char    *ft_strdup(char *s1);
+char	*null_free(char **tab);
+char	*full_free(char **tab, char *full);
 
 #endif
