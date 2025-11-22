@@ -63,7 +63,7 @@ int ft_verif(const char *path)
 	if (access(path, F_OK) != 0)
 	{
 		if (errno == ENOENT)
-			return 1;
+			return 127;
 		return 1;
 	}
 	if (access(path, X_OK) != 0)
@@ -77,43 +77,32 @@ int ft_verif(const char *path)
 
 char *find_path(char *cmd, char **tabenv)
 {
-	int   i = 0, j;
-	char **path;
-	char *full_path;
+    int i = 0, j;
+    char **path;
+    char *full_path;
 
-	if (ft_strchr(cmd, '/'))
-	{
-		int code = ft_verif(cmd);
-		if (code == 0)
-			return ft_strdup(cmd);
-		exit(code);
-	}
-	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
-		i++;
-	if (!tabenv[i])
-		return NULL;
-	path = ft_split(tabenv[i] + 5, ':');
-	j = 0;
-	while (path[j])
-	{
-		full_path = ft_strjoin(path[j], cmd);
-		if (access(full_path, F_OK) == 0)
-		{
-			int code = ft_verif(full_path);
-			if (code == 0)
-			{
-				ft_free_tab(path);
-				return full_path;
-			}
-			ft_free_tab(path);
-			free(full_path);
-			exit(code);
-		}
-		free(full_path);
-		j++;
-	}
-	ft_free_tab(path);
-	return NULL;
+
+    if (!cmd || !*cmd)
+        exit(127);
+    if (ft_strchr(cmd, '/'))
+        return ft_strdup(cmd); // ne quitte pas, laisse safe_execve gérer
+    while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
+        i++;
+    if (!tabenv[i])
+        return NULL;
+    path = ft_split(tabenv[i] + 5, ':');
+    j = 0;
+    while (path[j])
+    {
+        full_path = ft_strjoin(path[j], cmd);
+        if (access(full_path, F_OK) == 0)
+        {
+            ft_free_tab(path);
+            return full_path; // renvoie le chemin, safe_execve vérifiera X_OK
+        }
+        free(full_path);
+        j++;
+    }
+    ft_free_tab(path);
+    return NULL;
 }
-
-

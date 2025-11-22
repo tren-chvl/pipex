@@ -76,25 +76,24 @@ int pipex(int argc, char **argv, char **envp)
     char    *cmd_path;
     char    **cmd_args;
     int     fd[2];
-	int exit_code;
+    int     exit_code;
 
     data.argc = argc;
     data.argv = argv;
     data.envp = envp;
     data.outfile_path = argv[argc - 1];
     data.append = 0;
+
     infile = open(argv[1], O_RDONLY);
     if (infile < 0)
         return (perror("infile"), 1);
+
     prev_fd = infile;
     i = 2;
     while (i < argc - 2)
     {
         if (pipe(fd) == -1)
-        {
-            perror("pipe");
-            exit(1);
-        }
+            return (perror("pipe"), 1);
         cmd_args = ft_split(argv[i], ' ');
         cmd_path = find_path(cmd_args[0], envp);
         exec_middle(prev_fd, cmd_path, cmd_args, envp, fd);
@@ -112,8 +111,9 @@ int pipex(int argc, char **argv, char **envp)
     ft_free_tab(cmd_args);
     close(prev_fd);
     exit_code = wait_all(last_pid);
-    exit(exit_code);
+    return exit_code;
 }
+
 
 
 

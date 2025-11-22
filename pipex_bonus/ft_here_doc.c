@@ -91,6 +91,8 @@ int wait_all(pid_t last_pid)
 
 
 
+
+
 pid_t run_commands(t_data *data, int prev_fd)
 {
     int fd[2];
@@ -148,6 +150,5 @@ int here_doc(int argc, char **argv, char **envp)
 	if (prev_fd < 0)
 		return (1);
 	last_pid = run_commands(&data, prev_fd);
-	wait_all(last_pid);
-	return (0);
+	return (wait_all(last_pid));
 }
