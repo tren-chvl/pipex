@@ -62,3 +62,21 @@ void	ft_free_tab(char **tab)
 	}
 	free(tab);
 }
+int wait_all(pid_t last_pid)
+{
+	int status;
+	pid_t pid;
+	int exit_code = 0;
+
+	while ((pid = wait(&status)) > 0)
+	{
+		if (pid == last_pid)
+		{
+			if (WIFEXITED(status))
+				exit_code = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				exit_code = 128 + WTERMSIG(status);
+		}
+	}
+	return (exit_code);
+}
