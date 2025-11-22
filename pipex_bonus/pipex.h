@@ -28,12 +28,19 @@
 
 typedef struct s_data
 {
-    int		argc;
-    char	**argv;
-    char	**envp;
-    char	*outfile_path;
-    int		append;
-}   t_data;
+	int		argc;
+	char	**argv;
+	char	**envp;
+	char	*outfile_path;
+	int		append;
+}	t_data;
+
+typedef struct s_cmd
+{
+	char	*path;
+	char	**args;
+	char	**envp;
+}	t_cmd;
 
 typedef struct s_file
 {
@@ -42,7 +49,7 @@ typedef struct s_file
 	pid_t pid;
 }	t_file;
 
-void    safe_execve(char *path, char **argv, char **envp);
+void	safe_execve(char *path, char **argv, char **envp);
 int		error_msg(char *msg);
 char	*ft_strjoin(char *dir, char *cmd);
 int		ft_strlen(char *str);
@@ -58,9 +65,10 @@ void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);
 int		here_doc(int argc, char **argv, char **envp);
 int		pipex(int argc, char **argv, char **envp);
-int     wait_all(pid_t last_pid);
-pid_t   exec_middle(int prev_fd, char *cmd_path, char **cmd_args, char **envp, int fd[2]);
-pid_t   exec_last(int prev_fd, char *cmd_path, char **cmd_args, char **envp, t_data *data);
+int		wait_all(pid_t last_pid);
+pid_t	exec_middle(int prev_fd, t_cmd *cmd, int fd[2]);
+pid_t	exec_last(int prev_fd, t_cmd *cmd, t_data *data);
+pid_t	run_commands(t_data *data, int prev_fd, int start_index);
 
 char	*get_next_line(int fd);
 char	*read_newline(int fd, char *line);
