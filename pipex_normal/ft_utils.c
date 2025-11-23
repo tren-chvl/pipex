@@ -74,3 +74,23 @@ char	*ft_strjoin(char *dir, char *cmd)
 	join[i] = '\0';
 	return (join);
 }
+
+char *ft_strdup(char *s1)
+{
+	size_t  len;
+	char    *dest;
+	size_t  i;
+
+	len = ft_strlen(s1);
+	dest = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dest)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		dest[i] = s1[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}

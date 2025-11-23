@@ -59,7 +59,7 @@ char	*find_path(char *cmd, char **tabenv)
 	i = 0;
 	j = 0;
 	if (access(cmd, X_OK) == 0)
-		return (cmd);
+		return (ft_strdup(cmd));
 	i = ft_fauxlen(tabenv);
 	if (!tabenv[i])
 		return (NULL);

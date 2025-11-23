@@ -36,6 +36,8 @@ void	exec_commande(char *cmd, char **envp)
 	perror("execve");
 	ft_free_tab(split);
 	free(path);
+	if (errno == EACCES)
+		exit(126);
 	exit(127);
 }
 

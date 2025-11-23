@@ -40,8 +40,6 @@ void	procces_child1(int *fd, char **argv, char **envp);
 char	*find_path(char *cmd, char **envp);
 void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);
-
-void	read_here_doc(char *limiter, int fd);
-void	wait_all(void);
+char *ft_strdup(char *s1);
 
 #endif
