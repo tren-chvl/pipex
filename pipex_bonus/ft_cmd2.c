@@ -12,17 +12,24 @@
 
 #include "pipex.h"
 
-void	procces_child2(int *fd, char **argv, char **envp)
+pid_t exec_middle(int prev_fd, t_cmd *cmd, int fd[2])
 {
-	int	outfile;
+	pid_t pid;
 
-	outfile = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
-	if (outfile == -1)
-		exit(error_msg("outfile"));
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
-	close(outfile);
-	close(fd[0]);
-	close(fd[1]);
-	exec_commande(argv[3], envp);
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		exit(1);
+	}
+	if (pid == 0)
+	{
+		dup2(prev_fd, STDIN_FILENO);
+		dup2(fd[1], STDOUT_FILENO);
+		close(prev_fd);
+		close(fd[0]);
+		close(fd[1]);
+		safe_execve(cmd->path, cmd->args, cmd->envp);
+	}
+	return (pid);
 }

@@ -12,6 +12,22 @@
 
 #include "pipex.h"
 
+void	parse_command(char *cmd, char **envp, char **cmd_path, char ***cmd_args)
+{
+	*cmd_args = ft_split(cmd, ' ');
+	if (!*cmd_args || !(*cmd_args)[0])
+	{
+		perror("parse_command");
+		exit(127);
+	}
+	*cmd_path = find_path((*cmd_args)[0], envp);
+	if (!*cmd_path)
+	{
+		perror("command not found");
+		exit(127);
+	}
+}
+
 void safe_execve(char *path, char **argv, char **envp)
 {
 	if (!path) 

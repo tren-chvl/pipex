@@ -42,12 +42,6 @@ typedef struct s_cmd
 	char	**envp;
 }	t_cmd;
 
-typedef struct s_file
-{
-	int outfile;
-	int flags;
-	pid_t pid;
-}	t_file;
 
 void	safe_execve(char *path, char **argv, char **envp);
 int		error_msg(char *msg);
@@ -57,9 +51,8 @@ char	**ft_split(char *s, char c);
 int		ft_strncmp(char *s1, char *s2, unsigned int n);
 int		ft_strcmp(char *s1, char *s2);
 void	ft_bzero(void *s, size_t n);
-void	procces_child2(int *fd, char **argv, char **envp);
-void	procces_child1(int *fd, char **argv, char **envp);
 
+void	parse_command(char *cmd, char **envp, char **cmd_path, char ***cmd_args);
 char	*find_path(char *cmd, char **envp);
 void	ft_free_tab(char **tab);
 void	exec_commande(char *cmd, char **envp);

@@ -14,9 +14,9 @@
 
 char *ft_strdup(char *s1)
 {
-	size_t len;
-	char *dest;
-	size_t i;
+	size_t  len;
+	char    *dest;
+	size_t  i;
 
 	len = ft_strlen(s1);
 	dest = (char *)malloc(sizeof(char) * (len + 1));
@@ -32,36 +32,43 @@ char *ft_strdup(char *s1)
 	return (dest);
 }
 
-char *find_path(char *cmd, char **tabenv)
+char	*result_path(char **path, char *cmd)
 {
-    int i;
-	int j;
-    char **path;
-    char *full_path;
+	int		j;
+	char	*full_path;
+
+	j = 0;
+	while (path[j])
+	{
+		full_path = ft_strjoin(path[j], cmd);
+		if (access(full_path, F_OK) == 0)
+		{
+			ft_free_tab(path);
+			return (full_path);
+		}
+		free(full_path);
+		j++;
+	}
+	ft_free_tab(path);
+	return (NULL);
+}
+
+char	*find_path(char *cmd, char **tabenv)
+{
+	int		i;
+	char	**path;
+	char	*result;
 
 	i = 0;
-	j = 0;
-    if (!cmd || !*cmd)
-        exit(127);
-    if (ft_strchr(cmd, '/'))
-        return ft_strdup(cmd);
-    while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
-        i++;
-    if (!tabenv[i])
-        return NULL;
-    path = ft_split(tabenv[i] + 5, ':');
-    j = 0;
-    while (path[j])
-    {
-        full_path = ft_strjoin(path[j], cmd);
-        if (access(full_path, F_OK) == 0)
-        {
-            ft_free_tab(path);
-            return full_path;
-        }
-        free(full_path);
-        j++;
-    }
-    ft_free_tab(path);
-    return NULL;
+	if (!cmd || !*cmd)
+		exit(127);
+	if (ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
+	while (tabenv[i] && ft_strncmp(tabenv[i], "PATH=", 5))
+		i++;
+	if (!tabenv[i])
+		return (NULL);
+	path = ft_split(tabenv[i] + 5, ':');
+	result = result_path(path, cmd);
+	return (result);
 }
